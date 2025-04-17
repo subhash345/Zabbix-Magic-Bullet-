@@ -13,7 +13,25 @@ mysql -uroot -p # login to mysql with passoword
 mysql -uroot  # login to sql without password
 Run the following on your database host.
 mysql> create database zabbix character set utf8mb4 collate utf8mb4_bin;
-mysql> create user zabbix@localhost identified by 'password';
-mysql> grant all privileges on zabbix.* to zabbix@localhost;
-mysql> set global log_bin_trust_function_creators = 1;
+mysql> create user zabbix@localhost identified by 'password';  # creating username and password
+mysql> grant all privileges on zabbix.* to zabbix@localhost;    #Permissions on server
+mysql> set global log_bin_trust_function_creators = 1;            # Turning security on
 mysql> quit;
+zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -p zabbix  #On Zabbix server host import initial schema and data. You will be prompted to enter your newly created password.
+ mysql -uroot # login back to sql -Disable log_bin_trust_function_creators option after importing database schema. 
+set global log_bin_trust_function_creators = 0;  Turning on the security we disabled
+Configure the database for Zabbix server 
+Edit file /etc/zabbix/zabbix_server.conf 
+Make the line active by removing the hastag and add the password in this case it's password
+ DBPassword=password
+Start Zabbix server and agent processes and make it start at system boot. 
+systemctl restart zabbix-server zabbix-agent apache2
+systemctl enable zabbix-server zabbix-agent apache2
+systemctl status zabbix-server zabbix-agent apache2 #You can check the status by this command -  
+To check the database go to server ip and to access the zabbiz webpage go to ip/zabbix
+Language error encountered on setup below are the steps to fix -
+sudo locale-gen en_US.UTF-8 # sudo locale-gen en_US.UTF-8
+sudo update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8  # Update the system locale settings
+sudo apt update 
+sudo apt install -y language-pack-en # Ensure the English language pack is installed: 
+restart the apache2 and zabbiz after the update
