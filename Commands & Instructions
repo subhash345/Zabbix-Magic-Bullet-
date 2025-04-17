@@ -1,0 +1,19 @@
+sudo apt update && sudo apt upgrade 
+cat /etc/os-release    # Check the OS version 
+Choose the right platform for installation on Zabbix - https://www.zabbix.com/download?zabbix=7.2&os_distribution=ubuntu&os_version=24.04&components=server_frontend_agent&db=mysql&ws=apache
+sudo -s     # Start new shell session with root privileges. 
+wget https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb  #  Install Zabbix repository
+dpkg -i zabbix-release_latest_7.2+ubuntu24.04_all.deb
+apt update
+apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent   # Install Zabbix server, frontend, agent 
+Create initial database
+Make sure you have database server up and running.
+sudo apt install mysql-server  # for database installation
+mysql -uroot -p # login to mysql with passoword
+mysql -uroot  # login to sql without password
+Run the following on your database host.
+mysql> create database zabbix character set utf8mb4 collate utf8mb4_bin;
+mysql> create user zabbix@localhost identified by 'password';
+mysql> grant all privileges on zabbix.* to zabbix@localhost;
+mysql> set global log_bin_trust_function_creators = 1;
+mysql> quit;
